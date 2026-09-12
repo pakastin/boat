@@ -18,61 +18,50 @@ export default class Boat {
     this.vx = 0;
     this.vy = 0;
 
+    // Inputs, both expected in [-1, 1]
     this.throttle = 0;
     this.steer = 0;
 
+    // --- Mass / inertia ---
+    // Higher mass = more momentum = harder to stop precisely (good for docking tension)
     this.mass = 2.2;
-    this.momentOfInertia = 150;
+    this.momentOfInertia = 150; // higher = slower to spin up/down
 
+    // --- Engine ---
     this.maxThrustForward = 260;
     this.maxThrustReverse = 120; // real outboards are weaker in reverse
-    this.engineResponse = 5; // how fast the prop catches up to throttle input
+    this.engineResponse = 5; // how fast the prop catches up to the throttle input
     this.currentThrustFraction = 0;
 
+    // --- Steering ---
     this.maxSteerAngle = 35;
     this.motorDistance = 59.5;
-    this.steerResponse = 8; // how fast the motor swings to commanded angle
+    this.steerResponse = 8; // how fast the motor swings to the commanded angle
     this.currentSteerFraction = 0;
 
-    this.hullSpeed = 90; // "wall" speed for a displacement hull
-    this.planingSpeed = 130; // fully on plane above this
-    this.displacementDrag = 0.5;
-    this.humpDragMultiplier = 2.5; // how hard the hull-speed wall bites
-    this.planingDrag = 0.15; // lower baseline drag once planing
-    this.forwardQuadraticDrag = 0.0022; // extra high-speed damping on top of the curve
+    // --- Drag: linear term dominates at low speed, quadratic term dominates
+    // at high speed and is what naturally caps top speed (no hard clamp needed) ---
+    this.forwardLinearDrag = 0.5;
+    this.forwardQuadraticDrag = 0.0029;
 
+    // Hull resists sliding sideways much more than moving forward (keel effect)
     this.lateralLinearDrag = 25;
     this.lateralQuadraticDrag = 0.5;
 
     this.angularLinearDrag = 90;
     this.angularQuadraticDrag = 4;
 
+    // Safety net only — the drag model above should make this a non-issue
     this.maxSpeed = 500;
 
     this.motor = this.el.querySelector("rect");
     this.motor.style.transformOrigin = `${62 + 6}px ${121 + 10.5}px`;
   }
 
-  getForwardDragCoefficient(forwardSpeed) {
-    const s = Math.abs(forwardSpeed);
-
-    if (s <= this.hullSpeed) {
-      const t = s / this.hullSpeed;
-      return this.displacementDrag * (1 + this.humpDragMultiplier * t ** 3);
-    }
-
-    if (s <= this.planingSpeed) {
-      const t = (s - this.hullSpeed) / (this.planingSpeed - this.hullSpeed);
-      const peakDrag = this.displacementDrag * (1 + this.humpDragMultiplier);
-      return peakDrag + (this.planingDrag - peakDrag) * t;
-    }
-
-    return this.planingDrag;
-  }
-
   update() {
     const dt = 1 / 60;
 
+    // Engine and steering don't respond instantly — smooth toward the target
     this.currentThrustFraction +=
       (this.throttle - this.currentThrustFraction) *
       (1 - Math.exp(-this.engineResponse * dt));
@@ -103,13 +92,13 @@ export default class Boat {
     const thrustX = motorX * thrustMagnitude;
     const thrustY = motorY * thrustMagnitude;
 
+    // Split current velocity into hull-relative forward/lateral components
     const forwardVelocity = this.vx * forwardX + this.vy * forwardY;
     const lateralVelocity = this.vx * rightX + this.vy * rightY;
 
-    const forwardDragCoeff = this.getForwardDragCoefficient(forwardVelocity);
     const forwardDragForce =
       -Math.sign(forwardVelocity) *
-      (forwardDragCoeff * Math.abs(forwardVelocity) +
+      (this.forwardLinearDrag * Math.abs(forwardVelocity) +
         this.forwardQuadraticDrag * forwardVelocity ** 2);
 
     const lateralDragForce =
@@ -122,6 +111,7 @@ export default class Boat {
     const forceY =
       thrustY + forwardY * forwardDragForce + rightY * lateralDragForce;
 
+    // F = ma
     this.vx += (forceX / this.mass) * dt;
     this.vy += (forceY / this.mass) * dt;
 
@@ -150,10 +140,10 @@ export default class Boat {
     this.x += this.vx * dt;
     this.y += this.vy * dt;
 
-    if (this.x < -144) this.x = this.maxX;
-    if (this.y < -144) this.y = this.maxY;
-    if (this.x > this.maxX) this.x = -144;
-    if (this.y > this.maxY) this.y = -144;
+    if (this.x < -144) this.x = this.maxX + 144;
+    if (this.y < -144) this.y = this.maxY + 144;
+    if (this.x > this.maxX + 144) this.x = -144;
+    if (this.y > this.maxY + 144) this.y = -144;
   }
 
   render() {
