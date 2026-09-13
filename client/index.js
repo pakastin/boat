@@ -1,11 +1,30 @@
 import Boat from "./boat.js";
 import KeyboardHandler from "./keyboard-handler.js";
+import JoystickHandler from "./joystick-handler.js";
 
 const boat = new Boat({
   maxX: window.innerWidth,
   maxY: window.innerHeight,
 });
 document.body.appendChild(boat.el);
+
+const throttle = document.createElement("joystick");
+const steer = document.createElement("joystick");
+
+const throttleNib = document.createElement("joystick-nib");
+const steerNib = document.createElement("joystick-nib");
+
+throttle.appendChild(throttleNib);
+steer.appendChild(steerNib);
+
+const throttleHandler = new JoystickHandler(throttle);
+const steerHandler = new JoystickHandler(steer);
+
+throttle.classList.add("throttle");
+steer.classList.add("steer");
+
+document.body.appendChild(throttle);
+document.body.appendChild(steer);
 
 const keyboardHandler = new KeyboardHandler();
 
@@ -21,6 +40,9 @@ function update() {
 
   boat.throttle = 0;
   boat.steer = 0;
+
+  boat.throttle = throttleHandler.valueY;
+  boat.steer = steerHandler.valueX;
 
   const actions = {
     ArrowUp() {
