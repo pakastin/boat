@@ -105,7 +105,8 @@ export default class Boat {
     const thrustX = motorX * thrustMagnitude;
     const thrustY = motorY * thrustMagnitude;
 
-    const forwardVelocity = this.vx * forwardX + this.vy * forwardY;
+    const forwardVelocity = (this.forwardVelocity =
+      this.vx * forwardX + this.vy * forwardY);
     const lateralVelocity = this.vx * rightX + this.vy * rightY;
 
     const forwardDragCoeff = this.getForwardDragCoefficient(forwardVelocity);

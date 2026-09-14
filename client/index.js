@@ -92,7 +92,7 @@ function render() {
   requestAnimationFrame(render);
 
   boat.render();
-  stats.textContent = `${Math.round(boat.speed / 10)} kn`;
+  stats.textContent = `${Math.round(boat.forwardVelocity / 10)} kn`;
 }
 
 function resize() {
