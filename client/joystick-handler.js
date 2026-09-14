@@ -9,14 +9,15 @@ export default class JoystickHandler {
     this.nib.addEventListener("mousedown", this);
   }
   handleEvent(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
     const touches = e.touches && [...e.touches];
     const touch = touches?.find((touch) => touch.target === this.nib);
     const pageX = touch ? touch.pageX : e.pageX;
     const pageY = touch ? touch.pageY : e.pageY;
 
     if (e.type === "mousedown" || e.type === "touchstart") {
-      e.preventDefault();
-
       this.startX = pageX;
       this.startY = pageY;
 

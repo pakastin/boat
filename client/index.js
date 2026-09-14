@@ -2,11 +2,16 @@ import Boat from "./boat.js";
 import KeyboardHandler from "./keyboard-handler.js";
 import JoystickHandler from "./joystick-handler.js";
 
+const container = document.createElement("div");
+container.classList.add("container");
+
+document.body.appendChild(container);
+
 const boat = new Boat({
   maxX: window.innerWidth,
   maxY: window.innerHeight,
 });
-document.body.appendChild(boat.el);
+container.appendChild(boat.el);
 
 const throttle = document.createElement("joystick");
 const steer = document.createElement("joystick");
@@ -23,12 +28,12 @@ const steerHandler = new JoystickHandler(steer);
 throttle.classList.add("throttle");
 steer.classList.add("steer");
 
-document.body.appendChild(throttle);
-document.body.appendChild(steer);
+container.appendChild(throttle);
+container.appendChild(steer);
 
 const stats = document.createElement("stats");
 
-document.body.appendChild(stats);
+container.appendChild(stats);
 
 const keyboardHandler = new KeyboardHandler();
 
@@ -108,3 +113,5 @@ function resize() {
   boat.maxX = window.innerWidth;
   boat.maxY = window.innerHeight;
 }
+
+container.addEventListener("touchstart", (e) => e.preventDefault());
