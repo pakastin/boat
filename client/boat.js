@@ -25,21 +25,21 @@ export default class Boat {
     this.momentOfInertia = 150;
 
     this.maxThrustForward = 260;
-    this.maxThrustReverse = 120; // real outboards are weaker in reverse
-    this.engineResponse = 5; // how fast the prop catches up to throttle input
+    this.maxThrustReverse = 120;
+    this.engineResponse = 5;
     this.currentThrustFraction = 0;
 
     this.maxSteerAngle = 35;
     this.motorDistance = 29.75;
-    this.steerResponse = 8; // how fast the motor swings to commanded angle
+    this.steerResponse = 8;
     this.currentSteerFraction = 0;
 
-    this.hullSpeed = 90; // "wall" speed for a displacement hull
-    this.planingSpeed = 130; // fully on plane above this
+    this.hullSpeed = 90;
+    this.planingSpeed = 130;
     this.displacementDrag = 0.5;
-    this.humpDragMultiplier = 2.5; // how hard the hull-speed wall bites
-    this.planingDrag = 0.15; // lower baseline drag once planing
-    this.forwardQuadraticDrag = 0.0022; // extra high-speed damping on top of the curve
+    this.humpDragMultiplier = 2.5;
+    this.planingDrag = 0.15;
+    this.forwardQuadraticDrag = 0.0022;
 
     this.lateralLinearDrag = 25;
     this.lateralQuadraticDrag = 0.5;
@@ -51,6 +51,8 @@ export default class Boat {
 
     this.motor = this.el.querySelector("rect");
     this.motor.style.transformOrigin = `${31 + 3}px ${60.5 + 5.25}px`;
+
+    this.speed = 0;
   }
 
   getForwardDragCoefficient(forwardSpeed) {
@@ -125,7 +127,7 @@ export default class Boat {
     this.vx += (forceX / this.mass) * dt;
     this.vy += (forceY / this.mass) * dt;
 
-    const speed = Math.hypot(this.vx, this.vy);
+    const speed = (this.speed = Math.hypot(this.vx, this.vy));
     if (speed > this.maxSpeed) {
       const scale = this.maxSpeed / speed;
       this.vx *= scale;

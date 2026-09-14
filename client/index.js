@@ -26,6 +26,10 @@ steer.classList.add("steer");
 document.body.appendChild(throttle);
 document.body.appendChild(steer);
 
+const stats = document.createElement("stats");
+
+document.body.appendChild(stats);
+
 const keyboardHandler = new KeyboardHandler();
 
 window.addEventListener("resize", resize);
@@ -88,6 +92,7 @@ function render() {
   requestAnimationFrame(render);
 
   boat.render();
+  stats.textContent = `${Math.round(boat.speed / 10)} kn`;
 }
 
 function resize() {
