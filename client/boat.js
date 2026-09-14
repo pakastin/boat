@@ -30,7 +30,7 @@ export default class Boat {
     this.currentThrustFraction = 0;
 
     this.maxSteerAngle = 35;
-    this.motorDistance = 59.5;
+    this.motorDistance = 29.75;
     this.steerResponse = 8; // how fast the motor swings to commanded angle
     this.currentSteerFraction = 0;
 
@@ -50,7 +50,7 @@ export default class Boat {
     this.maxSpeed = 500;
 
     this.motor = this.el.querySelector("rect");
-    this.motor.style.transformOrigin = `${62 + 6}px ${121 + 10.5}px`;
+    this.motor.style.transformOrigin = `${31 + 3}px ${60.5 + 5.25}px`;
   }
 
   getForwardDragCoefficient(forwardSpeed) {
@@ -150,10 +150,10 @@ export default class Boat {
     this.x += this.vx * dt;
     this.y += this.vy * dt;
 
-    if (this.x < -144) this.x = this.maxX;
-    if (this.y < -144) this.y = this.maxY;
-    if (this.x > this.maxX) this.x = -144;
-    if (this.y > this.maxY) this.y = -144;
+    if (this.x < -72) this.x = this.maxX;
+    if (this.y < -72) this.y = this.maxY;
+    if (this.x > this.maxX) this.x = -72;
+    if (this.y > this.maxY) this.y = -72;
   }
 
   render() {

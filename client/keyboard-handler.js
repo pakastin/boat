@@ -10,7 +10,7 @@ export default class KeyboardHandler {
   }
 
   handleEvent(e) {
-    const key = e.key;
+    const key = e.code;
     const pressed = e.type === "keydown";
 
     this.keysDown[key] = pressed;

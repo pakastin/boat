@@ -48,13 +48,25 @@ function update() {
     ArrowUp() {
       boat.throttle = 1;
     },
+    KeyW() {
+      boat.throttle = 1;
+    },
     ArrowDown() {
+      boat.throttle = -1;
+    },
+    KeyS() {
       boat.throttle = -1;
     },
     ArrowLeft() {
       boat.steer = -1;
     },
+    KeyA() {
+      boat.steer = -1;
+    },
     ArrowRight() {
+      boat.steer = 1;
+    },
+    KeyD() {
       boat.steer = 1;
     },
   };
