@@ -47,6 +47,15 @@ export default class JoystickHandler {
     }
     this.valueX = dx / 16;
     this.valueY = -dy / 16;
+    if (this.rendering) {
+      return;
+    }
+    this.rendering = requestAnimationFrame(() => {
+      this.rendering = null;
+      this.render();
+    });
+  }
+  render() {
     this.nib.style.transform = `translate(${this.valueX}rem, ${-this.valueY}rem)`;
   }
 }

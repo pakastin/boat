@@ -44,6 +44,7 @@ function update() {
 
   boat.throttle = 0;
   boat.steer = 0;
+  boat.keyboardControl = false;
 
   boat.throttle = throttleHandler.valueY;
   boat.steer = steerHandler.valueX;
@@ -79,6 +80,7 @@ function update() {
     const value = keyboardHandler.keysDown[key];
     if (value) {
       if (actions[key]) {
+        boat.keyboardControl = true;
         actions[key]();
       }
     }
@@ -90,6 +92,13 @@ function update() {
 
 function render() {
   requestAnimationFrame(render);
+
+  if (boat.throttle && !throttle.valueY) {
+    throttle.valueY = boat.throttle;
+  }
+
+  throttleNib.style.transform = `translate(${throttleHandler.valueX}rem, ${-boat.throttle}rem)`;
+  steerNib.style.transform = `translate(${boat.steer}rem, ${-steerHandler.valueY}rem)`;
 
   boat.render();
   stats.textContent = `${Math.round(boat.forwardVelocity / 10)} kn`;
